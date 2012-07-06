@@ -176,10 +176,7 @@ public class TweetListView extends Activity implements AsyncTaskCompleteListener
     		
     		// make sure the listview is clickable
     		tweetlist.setClickable(true);
-    		
-    		
-    		final CharSequence[] items = {"Reply to tweet"};
-    		
+
     		tweetlist.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
     			
 				@Override
@@ -197,6 +194,15 @@ public class TweetListView extends Activity implements AsyncTaskCompleteListener
 	                Toast.makeText(getApplicationContext(), url_tweet, Toast.LENGTH_LONG).show();
 	                */
 	                
+	                final List<String> listItems = new ArrayList<String>();
+	                listItems.add("Reply to tweet");
+	                
+	                if(arrayList.get(i).location != null){
+	                	listItems.add("View on map");
+	                }
+	                
+	                final CharSequence[] items = listItems.toArray(new CharSequence[listItems.size()]);
+	                
 	                // set items to dialog and set up the onclick listener 
 	                dialog.setItems(items, new DialogInterface.OnClickListener() {
 	                    @Override
@@ -205,6 +211,9 @@ public class TweetListView extends Activity implements AsyncTaskCompleteListener
 		                        case 0: // show tweets in a list		                        	
 		                        	replyToTweet(arrayList.get(i).from_user.toString());
 		                            break;
+		                        case 1: // show tweets in a list		                        	
+		                        	showTweetsOnMap(arrayList.get(i).location.toString());
+		                            break;		                            
 		                        default:
 	                    	}
 	                    }
@@ -584,5 +593,18 @@ public class TweetListView extends Activity implements AsyncTaskCompleteListener
 		// TODO Auto-generated method stub
 		
 	}
+	
+    public void showTweetsOnMap(String location){
+
+    	// set up intent and attach text to pass to the next activity
+		Intent intent = new Intent(TweetListView.this, TweetMapView.class);
+
+		// pass the selecteditem object location through to the next intent
+		intent.putExtra("location", location);
+		
+		// launch intent
+		startActivity(intent);
+    }
+
 
 }

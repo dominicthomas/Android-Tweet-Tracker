@@ -165,7 +165,6 @@ public class TweetRowAdapter extends ArrayAdapter<Tweet> {
                     	view.setBackgroundColor(Color.argb(255, 51, 161, 201));
                     	//view.getBackground().setColorFilter(Color.parseColor("#00ff00"), PorterDuff.Mode.DARKEN);
                     }
-                    
             }                      
             
             return view;
