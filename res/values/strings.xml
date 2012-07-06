@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">Hello World, AndroidProjectZeroActivity!</string>
+    <string name="app_name">Tweet Tracker</string>
+    <string name="refresh">Refresh</string>
+    <string name="search">Search</string>
+
+</resources>
