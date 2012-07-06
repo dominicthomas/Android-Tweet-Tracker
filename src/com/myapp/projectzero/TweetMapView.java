@@ -47,7 +47,8 @@ public class TweetMapView extends MapActivity implements LocationListener, Async
     public int lon;
 	
 	// Original onCreate Method
-    public void onCreate(Bundle savedInstanceState) {
+    @Override
+	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
         // connect with the map xml layout

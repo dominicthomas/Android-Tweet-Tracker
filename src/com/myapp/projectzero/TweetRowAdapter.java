@@ -10,6 +10,8 @@ import java.util.LinkedHashMap;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -73,6 +75,12 @@ public class TweetRowAdapter extends ArrayAdapter<Tweet> {
                         
             // get current item at position
             Tweet this_tweet = tweets.get(position);
+            
+            // rest background color?
+            view.setBackgroundColor(Color.rgb(0, 0, 0));
+        	h.user_name.setTextColor(Color.rgb(255, 255, 255));
+        	h.tweet.setTextColor(Color.rgb(255, 255, 255));
+        	h.created.setTextColor(Color.rgb(255, 255, 255));
             
             if (this_tweet != null) {
             	
@@ -147,7 +155,17 @@ public class TweetRowAdapter extends ArrayAdapter<Tweet> {
                     	// if no url, set the bitmap to null
                     	h.thumbnail.setImageBitmap(null);
                     	// TODO: load in placeholder?                    	
-                    }   
+                    }
+                    
+                    
+                    if(this_tweet.getGeo() != null){
+                    	h.user_name.setTextColor(Color.rgb(0, 0, 0));
+                    	h.tweet.setTextColor(Color.rgb(0, 0, 0));
+                    	h.created.setTextColor(Color.rgb(0, 0, 0));
+                    	view.setBackgroundColor(Color.argb(255, 51, 161, 201));
+                    	//view.getBackground().setColorFilter(Color.parseColor("#00ff00"), PorterDuff.Mode.DARKEN);
+                    }
+                    
             }                      
             
             return view;

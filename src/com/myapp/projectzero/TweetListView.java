@@ -21,6 +21,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.google.android.maps.GeoPoint;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -197,7 +199,8 @@ public class TweetListView extends Activity implements AsyncTaskCompleteListener
 	                
 	                // set items to dialog and set up the onclick listener 
 	                dialog.setItems(items, new DialogInterface.OnClickListener() {
-	                    public void onClick(DialogInterface dialog, int item) {	 
+	                    @Override
+						public void onClick(DialogInterface dialog, int item) {	 
 	                    	switch(item) {
 		                        case 0: // show tweets in a list		                        	
 		                        	replyToTweet(arrayList.get(i).from_user.toString());
@@ -326,24 +329,30 @@ public class TweetListView extends Activity implements AsyncTaskCompleteListener
 				String profile_image_url = jsonObject.getString("profile_image_url");
 				String text = jsonObject.getString("text");
 				
-				/*
-				if(jsonObject.getJSONObject("geo") != JSONObject.NULL){
+				int hasg = 0;
+				GeoPoint location = null;
+				
+				// check for geo and then for coords, create new location from points
+				if(!jsonObject.isNull("geo")){
 					JSONObject geo = jsonObject.getJSONObject("geo");
-					JSONArray coordinates = geo.getJSONArray("coordinates");
-					//coordinates.get(0) + " : " + coordinates.get(1)	
-				}*/					
+					JSONArray coords = geo.getJSONArray("coordinates");
+					
+					if(coords.length() > 0){		
+						location = new GeoPoint((int)(coords.optDouble(0) * 1E6), (int)(coords.optDouble(1) * 1E6));												
+						hasg = 1;
+					}	
+				}					
 				
-			    /*  
-			     * "geo": {
-			        "coordinates": [
-			          51.5090,
-			          -0.2003
-			        ],
-			        "type": "Point"
-			      },
-			      */
 				
-				Tweet tweet = new Tweet(created_at, from_user_name, from_user, profile_image_url, text);
+				Tweet tweet;
+				// use a different Tweet constructor if a location has been found
+				if(hasg == 0){
+					// no location
+					tweet = new Tweet(created_at, from_user_name, from_user, profile_image_url, text);
+				}else{
+					// location
+					tweet = new Tweet(created_at, from_user_name, from_user, profile_image_url, text, location);
+				}
 				
 				// add the item called text from the json object to the array
 				arrayList.add(tweet);
@@ -374,6 +383,7 @@ public class TweetListView extends Activity implements AsyncTaskCompleteListener
 		dialog.setView(input);
 
 		dialog.setPositiveButton("Search", new DialogInterface.OnClickListener() {
+			@Override
 			public void onClick(DialogInterface dialog, int whichButton) {
 				
 				String new_url;
@@ -400,6 +410,7 @@ public class TweetListView extends Activity implements AsyncTaskCompleteListener
 		});
 
 		dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+			@Override
 			public void onClick(DialogInterface dialog, int whichButton) {
 				dismissSoftKeyboard();
 			}

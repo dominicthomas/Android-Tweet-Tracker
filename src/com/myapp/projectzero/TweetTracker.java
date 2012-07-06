@@ -44,7 +44,8 @@ public class TweetTracker extends Activity{
         
         // set the onclick of each list item, access the content and do something with it
         lv.setOnItemClickListener(new OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view,
+            @Override
+			public void onItemClick(AdapterView<?> parent, View view,
                 final int i, long id) {
             		
             		// set up new alert dialog
@@ -52,7 +53,8 @@ public class TweetTracker extends Activity{
 	                
 	                // set items to dialog and set up the onclick listener 
 	                dialog.setItems(items, new DialogInterface.OnClickListener() {
-	                    public void onClick(DialogInterface dialog, int item) {	 
+	                    @Override
+						public void onClick(DialogInterface dialog, int item) {	 
 	                    	
                         	// get the item from the object array using the position of the item clicked
                         	TweetLocationInfo selectedItem = (TweetLocationInfo)(lv.getItemAtPosition(i));
