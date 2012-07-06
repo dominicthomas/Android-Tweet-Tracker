@@ -5,7 +5,8 @@
 
     <ListView android:id="@+id/tweet_list" 
         android:layout_width="fill_parent" 
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@android:color/black">
     </ListView>
 
 </LinearLayout>

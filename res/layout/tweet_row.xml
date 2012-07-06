@@ -26,6 +26,7 @@
             android:gravity="center_vertical"
             android:textStyle="bold"
             android:textSize="15sp"
+            android:textColor="@android:color/white"
         />
         <TextView
             android:layout_width="fill_parent"
@@ -33,6 +34,7 @@
             android:id="@+id/tweet"
             android:singleLine="false"
             android:textSize="13sp"
+            android:textColor="@android:color/white"
         />
         <TextView
             android:layout_width="fill_parent"
@@ -40,6 +42,7 @@
             android:id="@+id/created"
             android:singleLine="true"
             android:textSize="10sp"
+            android:textColor="@android:color/white"
         />        
     </LinearLayout>
 </LinearLayout>
