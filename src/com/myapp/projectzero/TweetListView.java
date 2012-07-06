@@ -6,8 +6,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -20,8 +18,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import com.google.android.maps.GeoPoint;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -51,6 +47,8 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import com.google.android.maps.GeoPoint;
 
 public class TweetListView extends Activity implements AsyncTaskCompleteListener<String> {
 		
@@ -85,7 +83,7 @@ public class TweetListView extends Activity implements AsyncTaskCompleteListener
 			original_url = url.getUrl();
 			current_url = original_url;
 			
-			//new TweetGetterAsyncTask(this).execute();			
+//			new TweetGetterAsyncTask(this).execute();			
 //			new TweetGetterAsyncTask(new AsyncTaskCompleteListener<String>() {
 //
 //				@Override
