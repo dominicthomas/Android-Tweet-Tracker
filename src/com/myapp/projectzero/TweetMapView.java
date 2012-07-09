@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.http.HttpEntity;
@@ -28,23 +29,29 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.Toast;
 
 import com.google.android.maps.GeoPoint;
+import com.google.android.maps.ItemizedOverlay;
 import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
 import com.google.android.maps.OverlayItem;
-import com.myapp.projectzero.TweetListView.GetTweetsTask;
 
 public class TweetMapView extends MapActivity implements LocationListener, AsyncTaskCompleteListener<String> {
 	
-	private MapView mapView;
+	public MapView mapView;
 	private MapController mapController;
 	public int tweet_count = 200; 
     public int lat;
     public int lon;
+    private ViewGroup popupParent;
+    private View popup;
 	
 	// Original onCreate Method
     @Override
@@ -72,17 +79,17 @@ public class TweetMapView extends MapActivity implements LocationListener, Async
 			Toast.makeText(getApplicationContext(), "No Internet Connection!", Toast.LENGTH_LONG).show();
 		}
 		
-		
-		
-		
         // get the map view
         mapView = (MapView) findViewById(R.id.map_view);
-		
-        // get the map view overlays
-        List<Overlay> mapOverlays = mapView.getOverlays();
-
+        
         // set up a temp drawable
         Drawable drawable = this.getResources().getDrawable(R.drawable.icon);
+        
+        
+        // MAP OVERLAYS: GET OBJECT INFO AND BUILD OVERLAY 
+        
+        // get the map view overlays
+        List<Overlay> mapOverlays = mapView.getOverlays();
         
         // create a new tweet map overlay with the temp drawable
         TweetMapOverlay tweetMapOverlay = new TweetMapOverlay(drawable, this);
@@ -95,12 +102,15 @@ public class TweetMapView extends MapActivity implements LocationListener, Async
         
         // add the tweet map overlay to the mapview overlays
         mapOverlays.add(tweetMapOverlay);
+        
+        //
+        
                 
         // set up map options
         mapView.setBuiltInZoomControls(true);             
         mapController = mapView.getController();
         mapController.setCenter(location);
-        mapController.setZoom(16);
+        mapController.setZoom(15);
         
     }   
 	
@@ -289,4 +299,116 @@ public class TweetMapView extends MapActivity implements LocationListener, Async
             }
 	    }
 	}
+	
+	public class TweetMapOverlay extends ItemizedOverlay<OverlayItem> {
+
+		// setup the overlay item array list to store the overlays
+		private ArrayList<OverlayItem> mapOverlays = new ArrayList<OverlayItem>();
+	   
+		// setup the context ready to be passed in when called overlayitems from the mapview
+		private Context context;
+	   
+		// constructor with just the drawable
+		public TweetMapOverlay(Drawable defaultMarker) {
+			super(boundCenterBottom(defaultMarker));
+		}
+	   
+		// constuctor with the drawable and the context
+		public TweetMapOverlay(Drawable defaultMarker, Context context) {
+	        this(defaultMarker);
+	        //set the context
+	        this.context = context;
+		}
+		
+		// used to add overlays to the arraylist and populate
+		public void addOverlay(OverlayItem overlay) {
+			mapOverlays.add(overlay);
+			this.populate();
+		}	
+
+		@Override // create the items
+		protected OverlayItem createItem(int i) {
+	      return mapOverlays.get(i);
+		}	
+		
+		public void removeOverlay(int i) {
+			mapOverlays.remove(i);
+			this.populate();
+		}		
+
+		@Override // get the number of overlays
+		public int size() {
+	      return mapOverlays.size();
+		}
+	   
+		@Override // set the ontap event for the overlays
+		protected boolean onTap(int index) {	
+			// get the relevant overlay
+			//OverlayItem item = mapOverlays.get(index);
+			
+			// get the geopoint of the item clicked and pass to addPopup
+			addPopup(index);
+			
+			/*
+			// set up a dialog and pass in the context
+			AlertDialog.Builder dialog = new AlertDialog.Builder(context);
+			
+			// set the dialog parameters and show
+			dialog.setTitle(item.getTitle());
+			dialog.setMessage(item.getSnippet());
+			dialog.show();
+			*/
+			
+			return true;
+		}
+		
+		public void addPopup(int index){
+			
+			// hide any existing popups
+			hidePopup();
+			
+			if(popup == null){
+				
+				// get the item at said index
+				OverlayItem item = mapOverlays.get(index);
+				
+				// get the map viewgroup
+				popupParent = (ViewGroup) mapView.getParent();
+				popup = getLayoutInflater().inflate(R.layout.map_popup, popupParent, false);
+				
+				//MapView.LayoutParams(int width, int height, GeoPoint point, int x, int y, int alignment) 
+				popup.getWidth();
+				
+				// setup layout parameters
+				MapView.LayoutParams mvlp = new MapView.LayoutParams(
+	                    LayoutParams.WRAP_CONTENT, // width
+	                    LayoutParams.WRAP_CONTENT, // height
+	                    item.getPoint(), // geo point
+	                    0, // x
+	                    -170, // y
+	                    MapView.LayoutParams.LEFT // alignment
+	            ); 						
+				
+				// setup click listener to hide view
+				popup.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						mapView.removeView(popup);
+						popup = null;
+					}
+				});
+				
+				mapView.addView(popup, mvlp);			
+			}
+		}
+		
+		public void hidePopup(){
+			if(popup != null){
+				mapView.removeView(popup);
+				popup = null;
+			}
+		}
+	   
+	}
+		
 }
