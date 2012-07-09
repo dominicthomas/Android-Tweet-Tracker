@@ -377,7 +377,6 @@ public class TweetMapView extends MapActivity implements LocationListener, Async
 				popup = getLayoutInflater().inflate(R.layout.map_popup, popupParent, false);
 				
 				//MapView.LayoutParams(int width, int height, GeoPoint point, int x, int y, int alignment) 
-				popup.getWidth();
 				
 				// setup layout parameters
 				MapView.LayoutParams mvlp = new MapView.LayoutParams(
@@ -385,8 +384,8 @@ public class TweetMapView extends MapActivity implements LocationListener, Async
 	                    LayoutParams.WRAP_CONTENT, // height
 	                    item.getPoint(), // geo point
 	                    0, // x
-	                    -170, // y
-	                    MapView.LayoutParams.LEFT // alignment
+	                    -85, // y
+	                    MapView.LayoutParams.BOTTOM_CENTER // alignment
 	            ); 						
 				
 				// setup click listener to hide view
@@ -398,7 +397,8 @@ public class TweetMapView extends MapActivity implements LocationListener, Async
 					}
 				});
 				
-				mapView.addView(popup, mvlp);			
+				mapView.addView(popup, mvlp);
+				mapController.animateTo(item.getPoint());
 			}
 		}
 		

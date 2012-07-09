@@ -5,6 +5,8 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -105,5 +107,12 @@ public class TweetTracker extends Activity{
     	// when clicked, show a toast with the TextView text
     	Toast.makeText(getApplicationContext(), selectedItem.getName() + ": " + selectedItem.getLocation().toString(), Toast.LENGTH_SHORT).show();		                        	
     }
+    
+	@Override // inflate specified menu
+	public boolean onCreateOptionsMenu(Menu menu) {
+	    MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.home_menu, menu);
+	    return true;		
+	}	
 
 }
