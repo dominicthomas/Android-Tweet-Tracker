@@ -5,5 +5,6 @@
     <string name="app_name">Tweet Tracker</string>
     <string name="refresh">Refresh</string>
     <string name="search">Search</string>
-
+	<string name="add">Add Location</string>
+	
 </resources>

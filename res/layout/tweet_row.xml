@@ -35,6 +35,7 @@
             android:singleLine="false"
             android:textSize="13sp"
             android:textColor="@android:color/white"
+            android:autoLink="web"
         />
         <TextView
             android:layout_width="fill_parent"
