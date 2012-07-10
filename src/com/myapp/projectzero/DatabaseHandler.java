@@ -25,16 +25,17 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
  
     // Database Name
-    private static final String DATABASE_NAME = "contactsManager";
+    private static final String DATABASE_NAME = "locationsDatas";
  
-    // Contacts table name
+    // Locations table name
     private static final String TABLE_LOCATIONS = "locations";
  
-    // Contacts Table Columns names
+    // Locations Table Columns names
     private static final String KEY_ID = "id";
     private static final String KEY_NAME = "name";
-    private static final String KEY_LOC = "location";
- 
+    private static final String KEY_LAT = "lat";
+    private static final String KEY_LON = "lon";
+    
     public DatabaseHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -44,7 +45,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         String CREATE_CONTACTS_TABLE = "CREATE TABLE " + TABLE_LOCATIONS + "("
                 + KEY_ID + " INTEGER PRIMARY KEY," + KEY_NAME + " TEXT,"
-                + KEY_LOC + " TEXT" + ")";
+                + KEY_LAT + " TEXT," + KEY_LON + " TEXT" +")";
         db.execSQL(CREATE_CONTACTS_TABLE);
     }
  
@@ -63,75 +64,78 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      */
  
     // Adding new contact
-    void addLocation(Locations location) {
+    void addLocation(Location location) {
         SQLiteDatabase db = this.getWritableDatabase();
  
         ContentValues values = new ContentValues();
-        values.put(KEY_NAME, location.getName()); // Contact Name
-        values.put(KEY_LOC, location.getLocation()); // Contact Phone
- 
+        values.put(KEY_NAME, location.getName()); // Location Name
+        values.put(KEY_LAT, location.getLat()); // Location Lat
+        values.put(KEY_LON, location.getLon()); // Location Lon
+        
         // Inserting Row
         db.insert(TABLE_LOCATIONS, null, values);
         db.close(); // Closing database connection
     }
  
     // Getting single contact
-    Locations getLocation(int id) {
+    Location getLocation(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
  
         Cursor cursor = db.query(TABLE_LOCATIONS, new String[] { KEY_ID,
-                KEY_NAME, KEY_LOC }, KEY_ID + "=?",
+                KEY_NAME, KEY_LAT, KEY_LON }, KEY_ID + "=?",
                 new String[] { String.valueOf(id) }, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
  
-        Locations contact = new Locations(Integer.parseInt(cursor.getString(0)),
-                cursor.getString(1), cursor.getString(2));
+        Location contact = new Location(Integer.parseInt(cursor.getString(0)),
+                cursor.getString(1), cursor.getString(2), cursor.getString(3));
         
         // return contact
         return contact;
     }
  
     // Getting All Contacts
-    public List<Locations> getAllContacts() {
-        List<Locations> locationList = new ArrayList<Locations>();
+    public List<Location> getAllLocations() {
+        List<Location> locationList = new ArrayList<Location>();
         // Select All Query
         String selectQuery = "SELECT  * FROM " + TABLE_LOCATIONS;
  
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
- 
+        
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
-            	Locations location = new Locations();
+            	Location location = new Location();
             	location.setId(Integer.parseInt(cursor.getString(0)));
             	location.setName(cursor.getString(1));
-            	location.setLocation(cursor.getString(2));
+            	location.setLat(cursor.getString(2));
+            	location.setLon(cursor.getString(3));
                 // Adding contact to list
             	locationList.add(location);
             } while (cursor.moveToNext());
         }
- 
+
         // return contact list
         return locationList;
     }
  
     // Updating single contact
-    public int updateContact(Locations location) {
+    public int updateLocation(Location location) {
         SQLiteDatabase db = this.getWritableDatabase();
  
         ContentValues values = new ContentValues();
         values.put(KEY_NAME, location.getName());
-        values.put(KEY_LOC, location.getLocation());
- 
+        values.put(KEY_LAT, location.getLat());
+        values.put(KEY_LON, location.getLon());
+        
         // updating row
         return db.update(TABLE_LOCATIONS, values, KEY_ID + " = ?",
                 new String[] { String.valueOf(location.getId()) });
     }
  
     // Deleting single contact
-    public void deleteContact(Locations location) {
+    public void deleteLocation(Location location) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_LOCATIONS, KEY_ID + " = ?",
                 new String[] { String.valueOf(location.getId()) });
@@ -148,5 +152,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         // return count
         return cursor.getCount();
     }
- 
+    
+    public void deleteAllItems(){
+    	SQLiteDatabase db = this.getWritableDatabase();
+    	db.delete(TABLE_LOCATIONS, null, null);
+    }
 }

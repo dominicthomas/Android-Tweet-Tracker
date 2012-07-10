@@ -42,6 +42,12 @@ public class TweetRowAdapter extends ArrayAdapter<Tweet> {
     }
     
     @Override
+    public int getCount() {
+    	// TODO Auto-generated method stub
+    	return tweets.size();
+    }
+    
+    @Override
     public View getView(int position, View view, ViewGroup parent) {
     		// if view is null inflate the required custom layout - must reference the context passed in by the constructor
     	ViewHolder h;

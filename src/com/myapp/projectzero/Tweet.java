@@ -2,8 +2,7 @@ package com.myapp.projectzero;
 
 import com.google.android.maps.GeoPoint;
 
-
-public class Tweet {
+public class Tweet{
 	String created_at;
 	String from_user_name;
 	String from_user;

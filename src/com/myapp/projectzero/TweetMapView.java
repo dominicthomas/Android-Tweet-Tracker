@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +24,8 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
@@ -29,10 +33,13 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.maps.GeoPoint;
@@ -51,8 +58,8 @@ public class TweetMapView extends MapActivity implements LocationListener, Async
     public int lat;
     public int lon;
     private ViewGroup popupParent;
-    private View popup;
-	
+    private View popup; 
+    
 	// Original onCreate Method
     @Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -62,7 +69,10 @@ public class TweetMapView extends MapActivity implements LocationListener, Async
         setContentView(R.layout.map);
         
         // get location coords from intent data, split into array
-        String[] coords = getIntent().getStringExtra("location").split(","); 
+        String[] coords = getIntent().getStringExtra("location").split(",");
+        String user_name = getIntent().getStringExtra("from_user_name");
+        String profile_image_url = getIntent().getStringExtra("profile_image_url");
+        String text = getIntent().getStringExtra("text");
         
         // create a GeoPoint from strings passed in to this activity
         GeoPoint location = new GeoPoint(Integer.parseInt(coords[0]), Integer.parseInt(coords[1]));        
@@ -92,7 +102,8 @@ public class TweetMapView extends MapActivity implements LocationListener, Async
         List<Overlay> mapOverlays = mapView.getOverlays();
         
         // create a new tweet map overlay with the temp drawable
-        TweetMapOverlay tweetMapOverlay = new TweetMapOverlay(drawable, this);
+        //TweetMapOverlay tweetMapOverlay = new TweetMapOverlay(drawable, this);
+        TweetMapOverlay tweetMapOverlay = new TweetMapOverlay(drawable, this, user_name, profile_image_url, text);
         
         // set up a new overlay item using the geo point passed in with the intent
         OverlayItem overlayitem = new OverlayItem(location, "Hello", "I'm a Tweet!");
@@ -104,6 +115,7 @@ public class TweetMapView extends MapActivity implements LocationListener, Async
         mapOverlays.add(tweetMapOverlay);
         
         //
+        
         
                 
         // set up map options
@@ -307,7 +319,10 @@ public class TweetMapView extends MapActivity implements LocationListener, Async
 	   
 		// setup the context ready to be passed in when called overlayitems from the mapview
 		private Context context;
-	   
+		public String user_name;
+		public String profile_image_url;
+		public String text;
+				
 		// constructor with just the drawable
 		public TweetMapOverlay(Drawable defaultMarker) {
 			super(boundCenterBottom(defaultMarker));
@@ -319,6 +334,16 @@ public class TweetMapView extends MapActivity implements LocationListener, Async
 	        //set the context
 	        this.context = context;
 		}
+		
+		// constuctor with the drawable and the context
+		public TweetMapOverlay(Drawable defaultMarker, Context context, String user_name, String profile_image_url, String text) {
+	        this(defaultMarker);
+	        //set the context
+	        this.context = context;
+	        this.user_name = user_name;
+	        this.profile_image_url = profile_image_url;
+	        this.text = text;
+		}		
 		
 		// used to add overlays to the arraylist and populate
 		public void addOverlay(OverlayItem overlay) {
@@ -375,6 +400,20 @@ public class TweetMapView extends MapActivity implements LocationListener, Async
 				// get the map viewgroup
 				popupParent = (ViewGroup) mapView.getParent();
 				popup = getLayoutInflater().inflate(R.layout.map_popup, popupParent, false);
+				
+				((TextView)popup.findViewById(R.id.pop_user_name)).setText(this.user_name);
+				((TextView)popup.findViewById(R.id.pop_tweet)).setText(this.text);
+				
+				// set image drawable from url
+				try {
+					  ImageView i = (ImageView)popup.findViewById(R.id.pop_thumbnail);
+					  Bitmap bitmap = BitmapFactory.decodeStream((InputStream)new URL(this.profile_image_url).getContent());
+					  i.setImageBitmap(bitmap); 
+				} catch (MalformedURLException e) {
+					  e.printStackTrace();
+				} catch (IOException e) {
+					  e.printStackTrace();
+				}				
 				
 				//MapView.LayoutParams(int width, int height, GeoPoint point, int x, int y, int alignment) 
 				

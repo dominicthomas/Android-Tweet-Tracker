@@ -209,8 +209,8 @@ public class TweetListView extends Activity implements AsyncTaskCompleteListener
 		                        case 0: // show tweets in a list		                        	
 		                        	replyToTweet(arrayList.get(i).from_user.toString());
 		                            break;
-		                        case 1: // show tweets in a list		                        	
-		                        	showTweetsOnMap(arrayList.get(i).location.toString());
+		                        case 1: // show tweets on the map		                        	
+		                        	showTweetsOnMap(arrayList.get(i));
 		                            break;		                            
 		                        default:
 	                    	}
@@ -592,17 +592,19 @@ public class TweetListView extends Activity implements AsyncTaskCompleteListener
 		
 	}
 	
-    public void showTweetsOnMap(String location){
+    public void showTweetsOnMap(Tweet tweet){
 
     	// set up intent and attach text to pass to the next activity
 		Intent intent = new Intent(TweetListView.this, TweetMapView.class);
-
+				
 		// pass the selecteditem object location through to the next intent
-		intent.putExtra("location", location);
+		intent.putExtra("profile_image_url", tweet.profile_image_url.toString());
+		intent.putExtra("from_user_name", tweet.from_user_name.toString());
+		intent.putExtra("location", tweet.location.toString());			
+		intent.putExtra("text", tweet.text.toString());
 		
 		// launch intent
 		startActivity(intent);
     }
-
 
 }
